@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Automation Dashboard</title>
+
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: Arial, sans-serif;
+    }
+
+    body {
+        background: #f4f6f9;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+    }
+
+    .dashboard {
+        background: white;
+        padding: 30px;
+        width: 450px;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
+    h1 {
+        text-align: center;
+        margin-bottom: 20px;
+        color: #333;
+    }
+
+    label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: bold;
+    }
+
+    input {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        margin-bottom: 15px;
+    }
+
+    button {
+        width: 100%;
+        padding: 12px;
+        border: none;
+        background: #0078ff;
+        color: white;
+        font-size: 16px;
+        border-radius: 6px;
+        cursor: pointer;
+    }
+
+    button:hover {
+        background: #005fd1;
+    }
+
+    .facts {
+        margin-top: 20px;
+        background: #eef5ff;
+        padding: 12px;
+        border-radius: 6px;
+    }
+
+    pre {
+        white-space: pre-wrap;
+        word-wrap: break-word;
+        font-size: 12px;
+    }
+</style>
+</head>
+<body>
+
+<div class="dashboard">
+    <h1>Automation Dashboard</h1>
+
+    <label for="postText">Post Content</label>
+    <input type="text" id="postText" placeholder="Enter automated post text">
+
+    <button id="sendBtn">Send Automated Post</button>
+
+    <div class="facts">
+        <h3>Web Development Facts (JSON)</h3>
+        <pre id="factsDisplay"></pre>
+    </div>
+</div>
+
+<script>
+    // JSON array containing 5 facts about web development
+    const webFacts = [
+        {
+            id: 1,
+            fact: "HTML provides the structure of web pages."
+        },
+        {
+            id: 2,
+            fact: "CSS is used to style and design websites."
+        },
+        {
+            id: 3,
+            fact: "JavaScript adds interactivity to web applications."
+        },
+        {
+            id: 4,
+            fact: "Responsive design helps websites work on all devices."
+        },
+        {
+            id: 5,
+            fact: "APIs allow different applications to communicate."
+        }
+    ];
+
+    document.getElementById("factsDisplay").textContent =
+        JSON.stringify(webFacts, null, 2);
+
+    document.getElementById("sendBtn").addEventListener("click", () => {
+        const text = document.getElementById("postText").value.trim();
+
+        const payload = {
+            chat_id: "marketing_channel_001",
+            text: text
+        };
+
+        console.log(JSON.stringify(payload));
+        alert("Payload printed to browser console!");
+    });
+</script>
+
+</body>
+</html>

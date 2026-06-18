@@ -1,0 +1,32 @@
+[
+  {
+    "empId": "E1001",
+    "name": "Priya Sharma",
+    "department": "Engineering",
+    "salary": 95000
+  },
+  {
+    "empId": "E1002",
+    "name": "Marcus Johnson",
+    "department": "Marketing",
+    "salary": 72000
+  },
+  {
+    "empId": "E1003",
+    "name": "Aisha Patel",
+    "department": "Human Resources",
+    "salary": 68000
+  },
+  {
+    "empId": "E1004",
+    "name": "Daniel Fernandez",
+    "department": "Finance",
+    "salary": 88000
+  },
+  {
+    "empId": "E1005",
+    "name": "Sophie Nguyen",
+    "department": "Product Management",
+    "salary": 105000
+  }
+]

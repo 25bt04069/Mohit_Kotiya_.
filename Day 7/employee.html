@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Employee Directory</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f0f2f5;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 48px 16px;
+      color: #1a1a2e;
+    }
+
+    header {
+      margin-bottom: 32px;
+      text-align: center;
+    }
+
+    header h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #1a1a2e;
+      letter-spacing: -0.5px;
+    }
+
+    header p {
+      margin-top: 6px;
+      font-size: 0.95rem;
+      color: #6b7280;
+    }
+
+    .table-wrapper {
+      width: 100%;
+      max-width: 900px;
+      background: #ffffff;
+      border-radius: 16px;
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+      overflow: hidden;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    thead tr {
+      background: linear-gradient(135deg, #4f46e5, #7c3aed);
+    }
+
+    thead th {
+      padding: 16px 24px;
+      text-align: left;
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #ffffff;
+    }
+
+    tbody tr {
+      border-bottom: 1px solid #f1f3f5;
+      transition: background 0.18s ease, transform 0.18s ease;
+    }
+
+    tbody tr:last-child { border-bottom: none; }
+
+    tbody tr:hover {
+      background: #f5f3ff;
+      transform: scale(1.005);
+      box-shadow: 0 2px 8px rgba(79, 70, 229, 0.08);
+      position: relative;
+      z-index: 1;
+    }
+
+    tbody td {
+      padding: 15px 24px;
+      font-size: 0.92rem;
+      color: #374151;
+      vertical-align: middle;
+    }
+
+    .badge-id {
+      display: inline-block;
+      background: #ede9fe;
+      color: #5b21b6;
+      font-size: 0.78rem;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 999px;
+      letter-spacing: 0.04em;
+    }
+
+    .badge-dept {
+      display: inline-block;
+      background: #e0f2fe;
+      color: #0369a1;
+      font-size: 0.78rem;
+      font-weight: 500;
+      padding: 3px 10px;
+      border-radius: 999px;
+    }
+
+    .salary {
+      font-weight: 600;
+      color: #059669;
+    }
+
+    .name { font-weight: 500; color: #111827; }
+
+    footer {
+      margin-top: 24px;
+      font-size: 0.82rem;
+      color: #9ca3af;
+    }
+
+    @media (max-width: 600px) {
+      thead th, tbody td { padding: 12px 14px; font-size: 0.84rem; }
+      header h1 { font-size: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Employee Directory</h1>
+    <p>A complete overview of current staff members</p>
+  </header>
+
+  <div class="table-wrapper">
+    <table id="employeeTable">
+      <thead>
+        <tr>
+          <th>Employee ID</th>
+          <th>Name</th>
+          <th>Department</th>
+          <th>Salary</th>
+        </tr>
+      </thead>
+      <tbody id="tableBody"></tbody>
+    </table>
+  </div>
+
+  <footer id="footerNote"></footer>
+
+  <script>
+    const employees = [
+      { "empId": "E1001", "name": "Priya Sharma",     "department": "Engineering",        "salary": 95000  },
+      { "empId": "E1002", "name": "Marcus Johnson",   "department": "Marketing",           "salary": 72000  },
+      { "empId": "E1003", "name": "Aisha Patel",      "department": "Human Resources",     "salary": 68000  },
+      { "empId": "E1004", "name": "Daniel Fernandez", "department": "Finance",             "salary": 88000  },
+      { "empId": "E1005", "name": "Sophie Nguyen",    "department": "Product Management",  "salary": 105000 }
+    ];
+
+    const tbody = document.getElementById("tableBody");
+
+    employees.forEach(function(emp) {
+      const tr = document.createElement("tr");
+
+      // Employee ID
+      const tdId = document.createElement("td");
+      const idBadge = document.createElement("span");
+      idBadge.className = "badge-id";
+      idBadge.textContent = emp.empId;
+      tdId.appendChild(idBadge);
+
+      // Name
+      const tdName = document.createElement("td");
+      tdName.className = "name";
+      tdName.textContent = emp.name;
+
+      // Department
+      const tdDept = document.createElement("td");
+      const deptBadge = document.createElement("span");
+      deptBadge.className = "badge-dept";
+      deptBadge.textContent = emp.department;
+      tdDept.appendChild(deptBadge);
+
+      // Salary
+      const tdSalary = document.createElement("td");
+      tdSalary.className = "salary";
+      tdSalary.textContent = "$" + emp.salary.toLocaleString("en-US");
+
+      tr.appendChild(tdId);
+      tr.appendChild(tdName);
+      tr.appendChild(tdDept);
+      tr.appendChild(tdSalary);
+
+      tbody.appendChild(tr);
+    });
+
+    document.getElementById("footerNote").textContent =
+      "Showing " + employees.length + " employee" + (employees.length !== 1 ? "s" : "");
+  </script>
+
+</body>
+</html>
