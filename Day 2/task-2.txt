@@ -1,0 +1,29 @@
+// JavaScript version of the given Java program
+
+// In Java:
+// int[] numbers = {5, 10, 15, 20};
+// JavaScript uses 'let' or 'const' instead of data types like int.
+const numbers = [5, 10, 15, 20];
+
+// In Java:
+// int sum = 0;
+// JavaScript does not require specifying the data type.
+let sum = 0;
+
+// In Java:
+// for (int i = 0; i < numbers.length; i++)
+// JavaScript loop syntax is similar, but no data type is declared for i.
+for (let i = 0; i < numbers.length; i++) {
+
+    // Same if-condition logic as Java
+    if (numbers[i] > 10) {
+        sum = sum + numbers[i];
+    }
+}
+
+// In Java:
+// System.out.println("Total: " + sum);
+//
+// In JavaScript:
+// console.log() is used to print output to the console.
+console.log("Total: " + sum);

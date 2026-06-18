@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Contact Us</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ─── Design Tokens ─────────────────────────────────────────── */
+    :root {
+      --ink:        #0f0e0d;
+      --ink-soft:   #5a564f;
+      --sand:       #f5f0e8;
+      --cream:      #fdfaf5;
+      --clay:       #c8b49a;
+      --terracotta: #b85c38;
+      --terracotta-dark: #8e4229;
+      --leaf:       #3a5a40;
+      --border:     #e0d8cd;
+      --shadow:     rgba(15, 14, 13, 0.08);
+      --radius-sm:  6px;
+      --radius-md:  12px;
+      --radius-lg:  20px;
+      --transition: 200ms ease;
+    }
+
+    /* ─── Reset & Base ───────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 2rem 1rem;
+      background-color: var(--sand);
+      background-image:
+        radial-gradient(ellipse 80% 60% at 15% 10%, rgba(200,180,154,.35) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 50% at 85% 90%, rgba(58,90,64,.12) 0%, transparent 55%);
+      font-family: 'DM Sans', sans-serif;
+      color: var(--ink);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ─── Card ───────────────────────────────────────────────────── */
+    .card {
+      width: 100%;
+      max-width: 640px;
+      background: var(--cream);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow:
+        0 2px 4px var(--shadow),
+        0 12px 40px rgba(15,14,13,.06);
+      overflow: hidden;
+    }
+
+    /* ─── Card Header ────────────────────────────────────────────── */
+    .card__header {
+      padding: 2.5rem 2.5rem 2rem;
+      border-bottom: 1px solid var(--border);
+      background: linear-gradient(135deg, var(--sand) 0%, var(--cream) 100%);
+      position: relative;
+    }
+
+    .card__header::after {
+      content: '';
+      position: absolute;
+      bottom: -1px; left: 2.5rem;
+      width: 48px; height: 3px;
+      background: var(--terracotta);
+      border-radius: 2px 2px 0 0;
+    }
+
+    .card__eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: .4rem;
+      font-size: .7rem;
+      font-weight: 600;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--terracotta);
+      margin-bottom: .6rem;
+    }
+
+    .card__eyebrow::before {
+      content: '';
+      display: block;
+      width: 16px; height: 1.5px;
+      background: currentColor;
+      border-radius: 1px;
+    }
+
+    .card__title {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(1.6rem, 4vw, 2.1rem);
+      line-height: 1.15;
+      color: var(--ink);
+    }
+
+    .card__title em {
+      font-style: italic;
+      color: var(--terracotta);
+    }
+
+    .card__subtitle {
+      margin-top: .5rem;
+      font-size: .875rem;
+      color: var(--ink-soft);
+      font-weight: 300;
+      line-height: 1.6;
+    }
+
+    /* ─── Form Body ──────────────────────────────────────────────── */
+    .card__body {
+      padding: 2rem 2.5rem 2.5rem;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.25rem;
+    }
+
+    /* Full-width columns */
+    .field--full { grid-column: 1 / -1; }
+
+    /* ─── Field & Label ──────────────────────────────────────────── */
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: .4rem;
+    }
+
+    .field__label {
+      font-size: .78rem;
+      font-weight: 600;
+      letter-spacing: .04em;
+      color: var(--ink);
+      display: flex;
+      align-items: center;
+      gap: .3rem;
+    }
+
+    /* Red asterisk for required fields – purely visual; HTML5 handles validation */
+    .field__label .req {
+      color: var(--terracotta);
+      font-size: .7rem;
+    }
+
+    /* ─── Inputs & Textarea ──────────────────────────────────────── */
+
+    /*
+     * HTML5 VALIDATION NOTES
+     * ──────────────────────
+     * • required        → field must have a non-empty value before submission.
+     * • type="email"    → browser enforces a valid email format (x@y.z).
+     * • type="tel"      → opens numeric keypad on mobile; combined with
+     *                     pattern="[0-9+\-\s()]{7,15}" it validates phone format.
+     * • minlength       → ensures a minimum character count (used on Message).
+     * • :invalid        → CSS pseudo-class styles a field after the user
+     *                     interacts with it (via :user-invalid in modern browsers,
+     *                     falling back to :invalid for broader support).
+     * • The browser shows its native validation tooltip on submit failure —
+     *   no JavaScript required.
+     */
+
+    .field__input,
+    .field__textarea,
+    .field__select {
+      width: 100%;
+      padding: .7rem 1rem;
+      font-family: inherit;
+      font-size: .9rem;
+      font-weight: 400;
+      color: var(--ink);
+      background: #fff;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-md);
+      outline: none;
+      transition:
+        border-color var(--transition),
+        box-shadow   var(--transition),
+        background   var(--transition);
+      -webkit-appearance: none;
+      appearance: none;
+    }
+
+    .field__input::placeholder,
+    .field__textarea::placeholder {
+      color: var(--clay);
+      font-weight: 300;
+    }
+
+    /* Focus state */
+    .field__input:focus,
+    .field__textarea:focus,
+    .field__select:focus {
+      border-color: var(--terracotta);
+      box-shadow: 0 0 0 3.5px rgba(184,92,56,.14);
+      background: #fff;
+    }
+
+    /* Valid state (after user has typed) */
+    .field__input:not(:placeholder-shown):valid,
+    .field__textarea:not(:placeholder-shown):valid {
+      border-color: var(--leaf);
+      background: #f6fbf7;
+    }
+
+    /* Invalid state – only shown after user interaction */
+    .field__input:not(:placeholder-shown):invalid,
+    .field__textarea:not(:placeholder-shown):invalid {
+      border-color: #c0392b;
+      background: #fff8f7;
+      box-shadow: 0 0 0 3px rgba(192,57,43,.10);
+    }
+
+    /* Textarea specifics */
+    .field__textarea {
+      min-height: 130px;
+      resize: vertical;
+      line-height: 1.6;
+    }
+
+    /* Select arrow */
+    .field__select-wrapper {
+      position: relative;
+    }
+
+    .field__select-wrapper::after {
+      content: '';
+      pointer-events: none;
+      position: absolute;
+      right: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 0; height: 0;
+      border-left: 5px solid transparent;
+      border-right: 5px solid transparent;
+      border-top: 6px solid var(--clay);
+    }
+
+    .field__select {
+      padding-right: 2.5rem;
+      cursor: pointer;
+      color: var(--ink);
+    }
+
+    .field__select:focus { border-color: var(--terracotta); box-shadow: 0 0 0 3.5px rgba(184,92,56,.14); }
+
+    /* ─── Helper / Error hint ────────────────────────────────────── */
+    .field__hint {
+      font-size: .72rem;
+      color: var(--ink-soft);
+      font-weight: 300;
+    }
+
+    /* ─── Submit Button ──────────────────────────────────────────── */
+    .btn-submit {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: .5rem;
+      width: 100%;
+      margin-top: .5rem;
+      padding: .85rem 2rem;
+      font-family: inherit;
+      font-size: .9rem;
+      font-weight: 600;
+      letter-spacing: .04em;
+      color: #fff;
+      background: var(--terracotta);
+      border: none;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      transition:
+        background     var(--transition),
+        transform      var(--transition),
+        box-shadow     var(--transition);
+    }
+
+    .btn-submit:hover {
+      background: var(--terracotta-dark);
+      box-shadow: 0 6px 20px rgba(184,92,56,.35);
+      transform: translateY(-1px);
+    }
+
+    .btn-submit:active {
+      transform: translateY(0);
+      box-shadow: none;
+    }
+
+    /* Arrow icon inside button */
+    .btn-submit .arrow {
+      display: inline-block;
+      font-style: normal;
+      transition: transform var(--transition);
+    }
+
+    .btn-submit:hover .arrow { transform: translateX(4px); }
+
+    /* ─── Footer note ────────────────────────────────────────────── */
+    .card__footer {
+      padding: 1.1rem 2.5rem;
+      border-top: 1px solid var(--border);
+      background: var(--sand);
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+      font-size: .75rem;
+      color: var(--ink-soft);
+    }
+
+    .card__footer::before {
+      content: '🔒';
+      font-size: .85rem;
+    }
+
+    /* ─── Responsive ─────────────────────────────────────────────── */
+    @media (max-width: 540px) {
+      .card__header,
+      .card__body    { padding-left: 1.5rem; padding-right: 1.5rem; }
+      .card__footer  { padding-left: 1.5rem; padding-right: 1.5rem; }
+      .card__header::after { left: 1.5rem; }
+
+      /* Stack the two-column grid to single column on mobile */
+      .form-grid { grid-template-columns: 1fr; }
+      .field--full { grid-column: 1; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="card" role="main">
+
+    <!-- ── Header ─────────────────────────────────────── -->
+    <header class="card__header">
+      <span class="card__eyebrow">Get in touch</span>
+      <h1 class="card__title">Let's <em>talk</em></h1>
+      <p class="card__subtitle">Fill in the form and we'll get back to you within 24 hours.</p>
+    </header>
+
+    <!-- ── Form ───────────────────────────────────────── -->
+    <div class="card__body">
+
+      <!--
+        novalidate is intentionally NOT set here so that the browser's
+        built-in HTML5 constraint validation runs on submit.
+      -->
+      <form
+        action="#"
+        method="post"
+        aria-label="Contact form"
+      >
+        <div class="form-grid">
+
+          <!-- Full Name
+               HTML5 validation: required — the field cannot be empty.
+          -->
+          <div class="field field--full">
+            <label class="field__label" for="fullName">
+              Full Name <span class="req" aria-hidden="true">*</span>
+            </label>
+            <input
+              class="field__input"
+              type="text"
+              id="fullName"
+              name="fullName"
+              placeholder="e.g. Priya Sharma"
+              autocomplete="name"
+              required
+              aria-required="true"
+              aria-describedby="fullName-hint"
+            />
+            <span class="field__hint" id="fullName-hint">Your first and last name.</span>
+          </div>
+
+          <!-- Email Address
+               HTML5 validation:
+               • type="email"  → browser checks for a valid email pattern.
+               • required      → cannot be left blank.
+          -->
+          <div class="field">
+            <label class="field__label" for="email">
+              Email Address <span class="req" aria-hidden="true">*</span>
+            </label>
+            <input
+              class="field__input"
+              type="email"
+              id="email"
+              name="email"
+              placeholder="you@example.com"
+              autocomplete="email"
+              required
+              aria-required="true"
+              aria-describedby="email-hint"
+            />
+            <span class="field__hint" id="email-hint">We'll never share your email.</span>
+          </div>
+
+          <!-- Phone Number
+               HTML5 validation:
+               • type="tel"       → opens numeric keypad on mobile devices.
+               • pattern          → regex enforces digits, spaces, +, -, and ()
+                                    with a length of 7–15 characters.
+               • title            → shown in the browser's native error tooltip.
+               Phone is optional here (no required attribute).
+          -->
+          <div class="field">
+            <label class="field__label" for="phone">Phone Number</label>
+            <input
+              class="field__input"
+              type="tel"
+              id="phone"
+              name="phone"
+              placeholder="+91 98765 43210"
+              autocomplete="tel"
+              pattern="[0-9+\-\s()]{7,15}"
+              title="Enter a valid phone number (7–15 digits, spaces, +, -, or parentheses)."
+              aria-describedby="phone-hint"
+            />
+            <span class="field__hint" id="phone-hint">Optional · International format preferred.</span>
+          </div>
+
+          <!-- Subject (select — no extra HTML5 validation needed) -->
+          <div class="field field--full">
+            <label class="field__label" for="subject">Subject</label>
+            <div class="field__select-wrapper">
+              <select
+                class="field__select"
+                id="subject"
+                name="subject"
+                aria-describedby="subject-hint"
+              >
+                <option value="" disabled selected>Choose a topic…</option>
+                <option value="general">General Inquiry</option>
+                <option value="support">Technical Support</option>
+                <option value="billing">Billing &amp; Payments</option>
+                <option value="partnership">Partnership</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+            <span class="field__hint" id="subject-hint">Select the topic that best describes your message.</span>
+          </div>
+
+          <!-- Message
+               HTML5 validation:
+               • required      → cannot be blank.
+               • minlength="20"→ browser enforces a minimum of 20 characters,
+                                  surfacing a native tooltip if too short.
+          -->
+          <div class="field field--full">
+            <label class="field__label" for="message">
+              Message <span class="req" aria-hidden="true">*</span>
+            </label>
+            <textarea
+              class="field__textarea"
+              id="message"
+              name="message"
+              placeholder="Write your message here… (minimum 20 characters)"
+              required
+              minlength="20"
+              aria-required="true"
+              aria-describedby="message-hint"
+            ></textarea>
+            <span class="field__hint" id="message-hint">At least 20 characters. Be as detailed as you like.</span>
+          </div>
+
+          <!-- Submit
+               The browser validates all fields with HTML5 constraints
+               before allowing the form to submit — no JavaScript needed.
+          -->
+          <div class="field field--full">
+            <button type="submit" class="btn-submit">
+              Send Message <span class="arrow" aria-hidden="true">→</span>
+            </button>
+          </div>
+
+        </div><!-- /.form-grid -->
+      </form>
+
+    </div><!-- /.card__body -->
+
+    <!-- ── Footer note ─────────────────────────────────── -->
+    <footer class="card__footer">
+      Your information is encrypted and never sold to third parties.
+    </footer>
+
+  </div><!-- /.card -->
+
+</body>
+</html>

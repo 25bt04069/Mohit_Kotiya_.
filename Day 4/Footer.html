@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Professional Responsive Footer</title>
+
+<style>
+    *{
+        margin:0;
+        padding:0;
+        box-sizing:border-box;
+    }
+
+    body{
+        font-family:Arial, Helvetica, sans-serif;
+        min-height:100vh;
+        display:flex;
+        flex-direction:column;
+        justify-content:flex-end;
+        background:#f4f6f9;
+    }
+
+    footer{
+        background:#0f172a;
+        color:#ffffff;
+        padding:60px 8% 25px;
+    }
+
+    .footer-container{
+        display:grid;
+        grid-template-columns:repeat(5, 1fr);
+        gap:40px;
+        margin-bottom:40px;
+    }
+
+    .footer-column h3{
+        font-size:20px;
+        margin-bottom:20px;
+        color:#ffffff;
+        position:relative;
+    }
+
+    .footer-column h3::after{
+        content:"";
+        width:45px;
+        height:3px;
+        background:#38bdf8;
+        position:absolute;
+        left:0;
+        bottom:-8px;
+    }
+
+    .footer-column p{
+        color:#cbd5e1;
+        line-height:1.8;
+        font-size:14px;
+    }
+
+    .footer-links{
+        list-style:none;
+    }
+
+    .footer-links li{
+        margin-bottom:12px;
+    }
+
+    .footer-links a{
+        text-decoration:none;
+        color:#cbd5e1;
+        transition:0.3s ease;
+    }
+
+    .footer-links a:hover{
+        color:#38bdf8;
+        padding-left:5px;
+    }
+
+    .contact-info p{
+        margin-bottom:12px;
+    }
+
+    .social-links{
+        display:flex;
+        flex-wrap:wrap;
+        gap:10px;
+        margin-top:10px;
+    }
+
+    .social-links a{
+        text-decoration:none;
+        color:#ffffff;
+        border:1px solid rgba(255,255,255,0.2);
+        padding:10px 14px;
+        border-radius:6px;
+        transition:0.3s ease;
+        font-size:14px;
+    }
+
+    .social-links a:hover{
+        background:#38bdf8;
+        border-color:#38bdf8;
+        transform:translateY(-2px);
+    }
+
+    .newsletter{
+        margin-top:15px;
+    }
+
+    .newsletter p{
+        margin-bottom:15px;
+    }
+
+    .newsletter-form{
+        display:flex;
+        gap:10px;
+        margin-top:15px;
+    }
+
+    .newsletter-form input{
+        flex:1;
+        padding:12px;
+        border:none;
+        border-radius:6px;
+        outline:none;
+        font-size:14px;
+    }
+
+    .newsletter-form button{
+        padding:12px 18px;
+        border:none;
+        border-radius:6px;
+        background:#38bdf8;
+        color:#fff;
+        cursor:pointer;
+        font-weight:bold;
+        transition:0.3s ease;
+    }
+
+    .newsletter-form button:hover{
+        background:#0ea5e9;
+    }
+
+    .footer-bottom{
+        border-top:1px solid rgba(255,255,255,0.15);
+        padding-top:20px;
+        text-align:center;
+        color:#94a3b8;
+        font-size:14px;
+    }
+
+    /* ==================================================
+       TABLET RESPONSIVE DESIGN
+       Reduces footer columns from 5 to 2 for better
+       readability and spacing on medium-sized screens.
+    =================================================== */
+    @media (max-width: 992px){
+        .footer-container{
+            grid-template-columns:repeat(2, 1fr);
+        }
+    }
+
+    /* ==================================================
+       MOBILE RESPONSIVE DESIGN
+       Stacks all sections into a single column and
+       makes newsletter form vertical for small screens.
+    =================================================== */
+    @media (max-width: 768px){
+
+        footer{
+            padding:50px 25px 20px;
+        }
+
+        .footer-container{
+            grid-template-columns:1fr;
+            gap:35px;
+        }
+
+        .newsletter-form{
+            flex-direction:column;
+        }
+
+        .newsletter-form button{
+            width:100%;
+        }
+
+        .social-links{
+            justify-content:flex-start;
+        }
+    }
+</style>
+</head>
+
+<body>
+
+<footer>
+    <div class="footer-container">
+
+        <!-- Company/About Section -->
+        <section class="footer-column">
+            <h3>About Us</h3>
+            <p>
+                We deliver innovative digital solutions that help businesses
+                grow, improve efficiency, and create exceptional customer
+                experiences through modern technology and design.
+            </p>
+        </section>
+
+        <!-- Quick Links Section -->
+        <nav class="footer-column">
+            <h3>Quick Links</h3>
+            <ul class="footer-links">
+                <li><a href="#">Home</a></li>
+                <li><a href="#">About Company</a></li>
+                <li><a href="#">Portfolio</a></li>
+                <li><a href="#">Blog</a></li>
+                <li><a href="#">Contact</a></li>
+            </ul>
+        </nav>
+
+        <!-- Services Section -->
+        <section class="footer-column">
+            <h3>Services</h3>
+            <ul class="footer-links">
+                <li><a href="#">Web Development</a></li>
+                <li><a href="#">UI/UX Design</a></li>
+                <li><a href="#">Mobile Apps</a></li>
+                <li><a href="#">SEO Optimization</a></li>
+                <li><a href="#">Digital Marketing</a></li>
+            </ul>
+        </section>
+
+        <!-- Contact Information Section -->
+        <section class="footer-column contact-info">
+            <h3>Contact</h3>
+            <p>📍 123 Business Avenue, City, Country</p>
+            <p>📞 +1 (234) 567-8900</p>
+            <p>✉ info@example.com</p>
+            <p>🕒 Mon - Fri: 9:00 AM - 6:00 PM</p>
+        </section>
+
+        <!-- Social Media & Newsletter -->
+        <section class="footer-column">
+            <h3>Connect With Us</h3>
+
+            <div class="social-links">
+                <a href="#">Facebook</a>
+                <a href="#">Instagram</a>
+                <a href="#">Twitter/X</a>
+                <a href="#">LinkedIn</a>
+                <a href="#">YouTube</a>
+            </div>
+
+            <div class="newsletter">
+                <p>Subscribe to receive updates, news, and special offers.</p>
+
+                <form class="newsletter-form">
+                    <input
+                        type="email"
+                        placeholder="Enter your email"
+                        required
+                    >
+                    <button type="submit">Subscribe</button>
+                </form>
+            </div>
+        </section>
+
+    </div>
+
+    <div class="footer-bottom">
+        <p>&copy; 2026 Your Company. All Rights Reserved.</p>
+    </div>
+</footer>
+
+</body>
+</html>

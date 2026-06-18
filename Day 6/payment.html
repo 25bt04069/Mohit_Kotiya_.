@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Secure Payment</title>
+
+  <style>
+    /* ============================================================
+       DESIGN TOKENS
+       Palette: Deep navy authority + electric cyan accent
+       Typography: "Georgia" for trust; system-ui for data/labels
+    ============================================================ */
+    :root {
+      --navy-900:  #0b0f1a;
+      --navy-800:  #111827;
+      --navy-700:  #1a2235;
+      --navy-600:  #243048;
+      --cyan-400:  #22d3ee;
+      --cyan-300:  #67e8f9;
+      --silver:    #94a3b8;
+      --white:     #f1f5f9;
+      --white-dim: #cbd5e1;
+      --error:     #f87171;
+      --success:   #34d399;
+
+      --radius-sm: 6px;
+      --radius-md: 12px;
+      --radius-lg: 20px;
+
+      --transition: 0.22s ease;
+    }
+
+    /* ============================================================
+       RESET & BASE
+    ============================================================ */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      min-height: 100vh;
+      background: var(--navy-900);
+      /* Signature: subtle diagonal circuit-board grid */
+      background-image:
+        linear-gradient(135deg, rgba(34,211,238,0.03) 25%, transparent 25%),
+        linear-gradient(225deg, rgba(34,211,238,0.03) 25%, transparent 25%),
+        linear-gradient(315deg, rgba(34,211,238,0.03) 25%, transparent 25%),
+        linear-gradient(45deg,  rgba(34,211,238,0.03) 25%, transparent 25%);
+      background-size: 48px 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 16px;
+      font-family: system-ui, -apple-system, sans-serif;
+    }
+
+    /* ============================================================
+       CARD SHELL
+    ============================================================ */
+    .payment-shell {
+      width: 100%;
+      max-width: 480px;
+    }
+
+    /* ---- Lock badge ---- */
+    .lock-badge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 18px;
+    }
+
+    .lock-badge svg {
+      color: var(--cyan-400);
+      flex-shrink: 0;
+    }
+
+    .lock-badge span {
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--silver);
+    }
+
+    .lock-badge strong {
+      color: var(--cyan-400);
+      font-weight: 600;
+    }
+
+    /* ---- Card surface ---- */
+    .payment-card {
+      background: var(--navy-800);
+      border: 1px solid rgba(34,211,238,0.12);
+      border-radius: var(--radius-lg);
+      padding: 36px 32px 32px;
+      box-shadow:
+        0 0 0 1px rgba(255,255,255,0.04),
+        0 24px 64px rgba(0,0,0,0.55),
+        0 0 80px rgba(34,211,238,0.04);
+    }
+
+    /* ---- Header ---- */
+    .card-header {
+      margin-bottom: 30px;
+    }
+
+    .card-header h1 {
+      font-family: Georgia, 'Times New Roman', serif;
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--white);
+      letter-spacing: -0.3px;
+    }
+
+    .card-header p {
+      margin-top: 4px;
+      font-size: 13px;
+      color: var(--silver);
+    }
+
+    /* ---- Divider ---- */
+    .divider {
+      height: 1px;
+      background: linear-gradient(90deg,
+        var(--cyan-400) 0%,
+        rgba(34,211,238,0.2) 60%,
+        transparent 100%);
+      margin-bottom: 28px;
+    }
+
+    /* ============================================================
+       FORM LAYOUT
+    ============================================================ */
+    .payment-form {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    /* ---- Field group ---- */
+    .field-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .field-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    /* ---- Label ---- */
+    label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--silver);
+    }
+
+    /* ---- Input wrapper (for icon + input) ---- */
+    .input-wrap {
+      position: relative;
+    }
+
+    .input-wrap svg.field-icon {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--silver);
+      pointer-events: none;
+      transition: color var(--transition);
+    }
+
+    /* ---- Input ---- */
+    input {
+      width: 100%;
+      height: 48px;
+      background: var(--navy-700);
+      border: 1.5px solid rgba(148,163,184,0.18);
+      border-radius: var(--radius-sm);
+      color: var(--white);
+      font-size: 15px;
+      font-family: 'Courier New', Courier, monospace; /* monospace for card numbers */
+      letter-spacing: 0.04em;
+      padding: 0 14px 0 42px;
+      outline: none;
+      transition:
+        border-color var(--transition),
+        box-shadow  var(--transition),
+        background  var(--transition);
+    }
+
+    /* Name & non-number fields get regular font */
+    #cardholderName,
+    #expiryDate {
+      font-family: system-ui, -apple-system, sans-serif;
+      letter-spacing: 0;
+    }
+
+    input::placeholder {
+      color: rgba(148,163,184,0.45);
+      font-family: system-ui, -apple-system, sans-serif;
+      letter-spacing: 0;
+    }
+
+    /* Focus ring */
+    input:focus {
+      border-color: var(--cyan-400);
+      background: var(--navy-600);
+      box-shadow: 0 0 0 3px rgba(34,211,238,0.12);
+    }
+
+    input:focus + svg.field-icon,           /* won't work due to DOM order */
+    .input-wrap:focus-within svg.field-icon {
+      color: var(--cyan-400);
+    }
+
+    /* Invalid state */
+    input.invalid {
+      border-color: var(--error);
+      box-shadow: 0 0 0 3px rgba(248,113,113,0.12);
+    }
+
+    /* Valid state */
+    input.valid {
+      border-color: var(--success);
+    }
+
+    /* ---- Inline field hint / error ---- */
+    .field-hint {
+      font-size: 11.5px;
+      color: var(--silver);
+      min-height: 16px;
+      transition: color var(--transition);
+    }
+
+    .field-hint.error {
+      color: var(--error);
+    }
+
+    .field-hint.success {
+      color: var(--success);
+    }
+
+    /* ============================================================
+       CARD NETWORK ICONS (displayed while typing)
+    ============================================================ */
+    .network-badge {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .network-badge .net-icon {
+      height: 22px;
+      width: auto;
+      opacity: 0.35;
+      transition: opacity var(--transition);
+    }
+
+    .network-badge .net-icon.active {
+      opacity: 1;
+    }
+
+    /* ============================================================
+       SUBMIT BUTTON
+    ============================================================ */
+    .btn-submit {
+      margin-top: 6px;
+      width: 100%;
+      height: 52px;
+      background: linear-gradient(135deg, var(--cyan-400), #0ea5e9);
+      border: none;
+      border-radius: var(--radius-sm);
+      color: var(--navy-900);
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition:
+        opacity      var(--transition),
+        transform    var(--transition),
+        box-shadow   var(--transition);
+      box-shadow: 0 6px 24px rgba(34,211,238,0.25);
+    }
+
+    .btn-submit:hover {
+      opacity: 0.92;
+      transform: translateY(-1px);
+      box-shadow: 0 10px 32px rgba(34,211,238,0.35);
+    }
+
+    .btn-submit:active {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    /* ============================================================
+       GLOBAL STATUS MESSAGE (above submit)
+    ============================================================ */
+    #statusMessage {
+      display: none;
+      padding: 12px 16px;
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      font-weight: 500;
+      text-align: center;
+    }
+
+    #statusMessage.error {
+      background: rgba(248,113,113,0.12);
+      border: 1px solid rgba(248,113,113,0.35);
+      color: var(--error);
+    }
+
+    #statusMessage.success {
+      background: rgba(52,211,153,0.1);
+      border: 1px solid rgba(52,211,153,0.35);
+      color: var(--success);
+    }
+
+    /* ============================================================
+       FOOTER
+    ============================================================ */
+    .card-footer {
+      margin-top: 22px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      color: var(--silver);
+      font-size: 11.5px;
+    }
+
+    .card-footer svg {
+      color: var(--cyan-400);
+    }
+
+    /* ============================================================
+       RESPONSIVE
+    ============================================================ */
+    @media (max-width: 400px) {
+      .payment-card {
+        padding: 28px 20px 24px;
+      }
+
+      .field-row {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* ============================================================
+       REDUCED MOTION
+    ============================================================ */
+    @media (prefers-reduced-motion: reduce) {
+      * { transition: none !important; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <main class="payment-shell" role="main">
+
+    <!-- Security badge -->
+    <div class="lock-badge" aria-hidden="true">
+      <!-- Lock icon -->
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+           stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+        <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+      </svg>
+      <span>256-bit SSL &nbsp;·&nbsp; <strong>Secure Checkout</strong></span>
+    </div>
+
+    <!-- Payment card surface -->
+    <section class="payment-card" aria-label="Payment form">
+
+      <header class="card-header">
+        <h1>Complete Payment</h1>
+        <p>Your information is encrypted and never stored.</p>
+      </header>
+
+      <div class="divider" role="separator"></div>
+
+      <!-- ======================================================
+           FORM
+      ====================================================== -->
+      <form
+        id="paymentForm"
+        class="payment-form"
+        novalidate
+        autocomplete="off"
+        aria-label="Credit card payment form"
+      >
+
+        <!-- ---- Cardholder Name ---- -->
+        <div class="field-group">
+          <label for="cardholderName">Cardholder Name</label>
+          <div class="input-wrap">
+            <input
+              type="text"
+              id="cardholderName"
+              name="cardholderName"
+              placeholder="Jane Smith"
+              maxlength="64"
+              autocomplete="cc-name"
+              aria-required="true"
+              aria-describedby="nameHint"
+            />
+            <!-- Person icon -->
+            <svg class="field-icon" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                 aria-hidden="true">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+              <circle cx="12" cy="7" r="4"/>
+            </svg>
+          </div>
+          <span class="field-hint" id="nameHint" role="alert" aria-live="polite"></span>
+        </div>
+
+        <!-- ---- Card Number ---- -->
+        <div class="field-group">
+          <label for="cardNumber">Card Number</label>
+          <div class="input-wrap">
+            <input
+              type="text"
+              id="cardNumber"
+              name="cardNumber"
+              placeholder="1234 5678 9012 3456"
+              maxlength="19"
+              inputmode="numeric"
+              autocomplete="cc-number"
+              aria-required="true"
+              aria-describedby="cardHint"
+            />
+            <!-- Credit card icon -->
+            <svg class="field-icon" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                 aria-hidden="true">
+              <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/>
+              <line x1="1" y1="10" x2="23" y2="10"/>
+            </svg>
+            <!-- Network badge placeholder (SVG text fallbacks) -->
+            <div class="network-badge" aria-hidden="true" id="networkBadge">
+              <!-- Visa pill -->
+              <svg class="net-icon" id="visaIcon" viewBox="0 0 38 24" height="22">
+                <rect width="38" height="24" rx="4" fill="#1A1F71"/>
+                <text x="19" y="17" text-anchor="middle"
+                      font-family="Arial,sans-serif" font-size="11"
+                      font-weight="900" fill="#F7B600" letter-spacing="1">VISA</text>
+              </svg>
+              <!-- MC pill -->
+              <svg class="net-icon" id="mcIcon" viewBox="0 0 38 24" height="22">
+                <rect width="38" height="24" rx="4" fill="#252525"/>
+                <circle cx="15" cy="12" r="7" fill="#EB001B"/>
+                <circle cx="23" cy="12" r="7" fill="#F79E1B"/>
+                <path d="M19 6.8a7 7 0 0 1 0 10.4A7 7 0 0 1 19 6.8z" fill="#FF5F00"/>
+              </svg>
+            </div>
+          </div>
+          <span class="field-hint" id="cardHint" role="alert" aria-live="polite"></span>
+        </div>
+
+        <!-- ---- Expiry + CVV row ---- -->
+        <div class="field-row">
+
+          <!-- Expiry -->
+          <div class="field-group">
+            <label for="expiryDate">Expiry Date</label>
+            <div class="input-wrap">
+              <input
+                type="text"
+                id="expiryDate"
+                name="expiryDate"
+                placeholder="MM / YY"
+                maxlength="7"
+                inputmode="numeric"
+                autocomplete="cc-exp"
+                aria-required="true"
+                aria-describedby="expiryHint"
+              />
+              <!-- Calendar icon -->
+              <svg class="field-icon" width="15" height="15" viewBox="0 0 24 24" fill="none"
+                   stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                   aria-hidden="true">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                <line x1="16" y1="2" x2="16" y2="6"/>
+                <line x1="8"  y1="2" x2="8"  y2="6"/>
+                <line x1="3"  y1="10" x2="21" y2="10"/>
+              </svg>
+            </div>
+            <span class="field-hint" id="expiryHint" role="alert" aria-live="polite"></span>
+          </div>
+
+          <!-- CVV -->
+          <div class="field-group">
+            <label for="cvv">CVV</label>
+            <div class="input-wrap">
+              <input
+                type="password"
+                id="cvv"
+                name="cvv"
+                placeholder="•••"
+                maxlength="4"
+                inputmode="numeric"
+                autocomplete="cc-csc"
+                aria-required="true"
+                aria-describedby="cvvHint"
+              />
+              <!-- Shield icon -->
+              <svg class="field-icon" width="15" height="15" viewBox="0 0 24 24" fill="none"
+                   stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                   aria-hidden="true">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+              </svg>
+            </div>
+            <span class="field-hint" id="cvvHint" role="alert" aria-live="polite"></span>
+          </div>
+
+        </div><!-- /.field-row -->
+
+        <!-- ---- Global status message ---- -->
+        <div
+          id="statusMessage"
+          role="alert"
+          aria-live="assertive"
+          aria-atomic="true"
+        ></div>
+
+        <!-- ---- Submit ---- -->
+        <button type="submit" class="btn-submit" id="submitBtn">
+          <!-- Lock icon -->
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"
+               aria-hidden="true">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+          </svg>
+          Pay Securely
+        </button>
+
+      </form><!-- /#paymentForm -->
+
+    </section><!-- /.payment-card -->
+
+    <!-- Footer -->
+    <footer class="card-footer">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none"
+           stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"
+           aria-hidden="true">
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+      </svg>
+      <span>PCI DSS Compliant &nbsp;·&nbsp; Data never stored on this device</span>
+    </footer>
+
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>

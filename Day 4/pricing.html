@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pricing Plans</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ============================================================
+       CSS CUSTOM PROPERTIES — Design Tokens
+    ============================================================ */
+    :root {
+      --bg:           #0b0e14;
+      --surface:      #13171f;
+      --surface-pro:  #0f1c2e;
+      --border:       #1e2530;
+      --border-pro:   #1a4a7a;
+      --accent:       #1d9bff;
+      --accent-glow:  rgba(29, 155, 255, 0.25);
+      --accent-light: #5cb8ff;
+      --gold:         #f5c842;
+      --gold-glow:    rgba(245, 200, 66, 0.18);
+      --text-primary: #e8edf5;
+      --text-secondary:#7a8599;
+      --text-muted:   #4a5568;
+      --green:        #22d3a0;
+
+      --radius-card:  20px;
+      --radius-btn:   10px;
+      --transition:   0.32s cubic-bezier(0.34, 1.26, 0.64, 1);
+
+      --font-display: 'Bebas Neue', sans-serif;
+      --font-body:    'DM Sans', sans-serif;
+    }
+
+    /* ============================================================
+       RESET & BASE
+    ============================================================ */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font-body);
+      background-color: var(--bg);
+      color: var(--text-primary);
+      min-height: 100vh;
+      /* Subtle grid-dot background texture */
+      background-image: radial-gradient(circle, #1e2530 1px, transparent 1px);
+      background-size: 28px 28px;
+    }
+
+    /* ============================================================
+       WRAPPER / SECTION
+    ============================================================ */
+    .pricing-section {
+      padding: 80px 24px 100px;
+      max-width: 1180px;
+      margin: 0 auto;
+    }
+
+    /* ============================================================
+       HEADER
+    ============================================================ */
+    .pricing-header {
+      text-align: center;
+      margin-bottom: 60px;
+    }
+
+    /* Eyebrow label */
+    .pricing-header .eyebrow {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--accent);
+      background: rgba(29, 155, 255, 0.08);
+      border: 1px solid rgba(29, 155, 255, 0.25);
+      padding: 6px 16px;
+      border-radius: 100px;
+      margin-bottom: 20px;
+    }
+
+    .pricing-header h1 {
+      font-family: var(--font-display);
+      font-size: clamp(42px, 7vw, 80px);
+      letter-spacing: 0.04em;
+      line-height: 1;
+      color: var(--text-primary);
+      margin-bottom: 16px;
+    }
+
+    .pricing-header h1 span {
+      color: var(--accent);
+    }
+
+    .pricing-header p {
+      font-size: 16px;
+      color: var(--text-secondary);
+      font-weight: 300;
+      max-width: 440px;
+      margin: 0 auto;
+      line-height: 1.65;
+    }
+
+    /* ============================================================
+       PRICING GRID — CSS Grid, NO Flexbox
+    ============================================================ */
+    .pricing-grid {
+      display: grid;
+      /* Three equal columns on desktop */
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      align-items: start;
+    }
+
+    /* ============================================================
+       PRICING CARD — base styles
+    ============================================================ */
+    .pricing-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-card);
+      padding: 40px 32px;
+      position: relative;
+      overflow: hidden;
+
+      /* Smooth hover transition — transform + shadow */
+      transition:
+        transform  var(--transition),
+        box-shadow var(--transition),
+        border-color 0.2s ease;
+    }
+
+    /* Subtle corner accent (decorative pseudo-element) */
+    .pricing-card::before {
+      content: '';
+      position: absolute;
+      top: 0; right: 0;
+      width: 120px; height: 120px;
+      background: radial-gradient(circle at top right, rgba(255,255,255,0.03), transparent 70%);
+      pointer-events: none;
+    }
+
+    /* ---- Hover: lift + stronger shadow ---- */
+    .pricing-card:hover {
+      transform: translateY(-10px);
+      box-shadow:
+        0 24px 60px rgba(0, 0, 0, 0.55),
+        0 8px 20px rgba(0, 0, 0, 0.3);
+      border-color: #2e3a4e;
+    }
+
+    /* ============================================================
+       PRO CARD — highlighted / recommended
+    ============================================================ */
+    .pricing-card--pro {
+      background: var(--surface-pro);
+      border-color: var(--border-pro);
+      /* Slightly taller via top padding; sits higher in grid */
+      padding-top: 48px;
+      box-shadow:
+        0 0 0 1px rgba(29, 155, 255, 0.15),
+        0 12px 40px rgba(29, 155, 255, 0.12);
+    }
+
+    /* Blue top-edge glow bar */
+    .pricing-card--pro::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
+      border-radius: var(--radius-card) var(--radius-card) 0 0;
+    }
+
+    /* Pro hover: stronger blue glow */
+    .pricing-card--pro:hover {
+      transform: translateY(-10px);
+      box-shadow:
+        0 0 0 1px rgba(29, 155, 255, 0.4),
+        0 28px 70px rgba(29, 155, 255, 0.22),
+        0 8px 20px rgba(0, 0, 0, 0.4);
+      border-color: var(--accent);
+    }
+
+    /* ============================================================
+       BADGE (Recommended)
+    ============================================================ */
+    .badge {
+      position: absolute;
+      top: 20px; right: 20px;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--bg);
+      background: var(--accent);
+      padding: 5px 12px;
+      border-radius: 100px;
+    }
+
+    /* ============================================================
+       PLAN NAME
+    ============================================================ */
+    .plan-name {
+      font-family: var(--font-display);
+      font-size: 13px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+      margin-bottom: 20px;
+    }
+
+    .pricing-card--pro .plan-name {
+      color: var(--accent-light);
+    }
+
+    /* ============================================================
+       PRICE BLOCK
+    ============================================================ */
+    .plan-price {
+      margin-bottom: 28px;
+      /* Grid for currency + amount + period alignment */
+      display: grid;
+      grid-template-columns: auto 1fr;
+      grid-template-rows: auto auto;
+      column-gap: 4px;
+      align-items: end;
+    }
+
+    .plan-price .currency {
+      font-size: 22px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      line-height: 1;
+      padding-bottom: 10px;
+      grid-column: 1;
+      grid-row: 1;
+    }
+
+    .plan-price .amount {
+      font-family: var(--font-display);
+      font-size: clamp(52px, 6vw, 68px);
+      letter-spacing: -0.01em;
+      line-height: 1;
+      color: var(--text-primary);
+      grid-column: 2;
+      grid-row: 1;
+    }
+
+    .pricing-card--pro .plan-price .amount {
+      color: var(--accent-light);
+    }
+
+    .plan-price .period {
+      font-size: 13px;
+      color: var(--text-muted);
+      font-weight: 400;
+      grid-column: 1 / -1;
+      grid-row: 2;
+      padding-top: 4px;
+    }
+
+    /* ============================================================
+       DIVIDER
+    ============================================================ */
+    .plan-divider {
+      height: 1px;
+      background: var(--border);
+      margin-bottom: 28px;
+    }
+
+    .pricing-card--pro .plan-divider {
+      background: var(--border-pro);
+    }
+
+    /* ============================================================
+       FEATURES LIST
+    ============================================================ */
+    .plan-features {
+      list-style: none;
+      margin-bottom: 36px;
+
+      /* Grid layout for feature rows */
+      display: grid;
+      grid-template-columns: 1fr;
+      row-gap: 14px;
+    }
+
+    .plan-features li {
+      display: grid;
+      grid-template-columns: 22px 1fr;
+      column-gap: 12px;
+      align-items: start;
+      font-size: 14px;
+      color: var(--text-secondary);
+      font-weight: 400;
+      line-height: 1.5;
+    }
+
+    /* Checkmark icon via SVG data URI on ::before */
+    .plan-features li::before {
+      content: '';
+      display: block;
+      width: 18px;
+      height: 18px;
+      margin-top: 1px;
+      border-radius: 50%;
+      background-color: rgba(34, 211, 160, 0.12);
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M2 6l3 3 5-5' stroke='%2322d3a0' stroke-width='1.6' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: center;
+      flex-shrink: 0;
+    }
+
+    .pricing-card--pro .plan-features li {
+      color: #9ab5d4;
+    }
+
+    .pricing-card--pro .plan-features li::before {
+      background-color: rgba(29, 155, 255, 0.15);
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M2 6l3 3 5-5' stroke='%231d9bff' stroke-width='1.6' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    }
+
+    /* ============================================================
+       CTA BUTTON
+    ============================================================ */
+    .btn-get-started {
+      display: block;
+      width: 100%;
+      padding: 15px 24px;
+      border: none;
+      border-radius: var(--radius-btn);
+      font-family: var(--font-body);
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      cursor: pointer;
+      text-align: center;
+      text-decoration: none;
+      color: var(--text-primary);
+
+      /* Default button style: outlined */
+      background: transparent;
+      border: 1px solid var(--border);
+      transition:
+        background  0.2s ease,
+        border-color 0.2s ease,
+        color 0.2s ease,
+        transform 0.15s ease,
+        box-shadow 0.2s ease;
+    }
+
+    .btn-get-started:hover {
+      background: rgba(255,255,255,0.06);
+      border-color: #3a4556;
+      transform: translateY(-1px);
+    }
+
+    /* Pro button: filled accent */
+    .pricing-card--pro .btn-get-started {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+      box-shadow: 0 4px 20px rgba(29, 155, 255, 0.35);
+    }
+
+    .pricing-card--pro .btn-get-started:hover {
+      background: var(--accent-light);
+      border-color: var(--accent-light);
+      box-shadow: 0 6px 28px rgba(29, 155, 255, 0.5);
+      transform: translateY(-2px);
+    }
+
+    /* Enterprise button: gold outlined */
+    .pricing-card--enterprise .btn-get-started {
+      border-color: rgba(245, 200, 66, 0.3);
+      color: var(--gold);
+    }
+
+    .pricing-card--enterprise .btn-get-started:hover {
+      background: var(--gold-glow);
+      border-color: var(--gold);
+    }
+
+    /* ============================================================
+       FOOTER NOTE
+    ============================================================ */
+    .pricing-footer-note {
+      text-align: center;
+      margin-top: 48px;
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .pricing-footer-note a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    .pricing-footer-note a:hover {
+      text-decoration: underline;
+    }
+
+    /* ============================================================
+       RESPONSIVE — Tablet (≤ 900px): 1 + 2 column hybrid
+    ============================================================ */
+    @media (max-width: 900px) {
+      .pricing-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      /* Pro card spans both columns and sits on top */
+      .pricing-card--pro {
+        grid-column: 1 / -1;
+        /* Widen the price amount on large single-row card */
+        max-width: 480px;
+        justify-self: center;
+        width: 100%;
+      }
+    }
+
+    /* ============================================================
+       RESPONSIVE — Mobile (≤ 580px): single column
+    ============================================================ */
+    @media (max-width: 580px) {
+      .pricing-section {
+        padding: 56px 16px 72px;
+      }
+
+      .pricing-grid {
+        grid-template-columns: 1fr;
+      }
+
+      /* Reset Pro card span */
+      .pricing-card--pro {
+        grid-column: auto;
+        max-width: 100%;
+      }
+
+      .pricing-card {
+        padding: 32px 24px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ============================================================
+       PRICING SECTION
+  ============================================================ -->
+  <section class="pricing-section" aria-labelledby="pricing-heading">
+
+    <!-- Section header -->
+    <header class="pricing-header">
+      <span class="eyebrow">Simple Pricing</span>
+      <h1 id="pricing-heading">CHOOSE YOUR <span>PLAN</span></h1>
+      <p>No hidden fees. No surprises. Pick the plan that fits your workflow and scale as you grow.</p>
+    </header>
+
+    <!-- Pricing grid: 3 cards laid out with CSS Grid -->
+    <div class="pricing-grid" role="list">
+
+      <!-- ── CARD 1: Basic ───────────────────────────────────── -->
+      <article class="pricing-card pricing-card--basic" role="listitem">
+
+        <p class="plan-name">Basic</p>
+
+        <!-- Price -->
+        <div class="plan-price" aria-label="$9 per month">
+          <span class="currency">$</span>
+          <span class="amount">9</span>
+          <span class="period">per month, billed annually</span>
+        </div>
+
+        <div class="plan-divider" role="separator"></div>
+
+        <!-- Feature list -->
+        <ul class="plan-features" aria-label="Basic plan features">
+          <li>Up to 3 active projects</li>
+          <li>5 GB secure cloud storage</li>
+          <li>Basic analytics dashboard</li>
+          <li>Email support (48 h response)</li>
+          <li>API access — 1,000 calls/mo</li>
+        </ul>
+
+        <a href="#" class="btn-get-started" role="button" aria-label="Get started with Basic plan">
+          Get Started
+        </a>
+
+      </article>
+
+      <!-- ── CARD 2: Pro (highlighted / recommended) ────────── -->
+      <article class="pricing-card pricing-card--pro" role="listitem" aria-label="Recommended plan">
+
+        <!-- Recommended badge -->
+        <span class="badge" aria-label="Recommended">Recommended</span>
+
+        <p class="plan-name">Pro</p>
+
+        <!-- Price -->
+        <div class="plan-price" aria-label="$29 per month">
+          <span class="currency">$</span>
+          <span class="amount">29</span>
+          <span class="period">per month, billed annually</span>
+        </div>
+
+        <div class="plan-divider" role="separator"></div>
+
+        <!-- Feature list -->
+        <ul class="plan-features" aria-label="Pro plan features">
+          <li>Unlimited active projects</li>
+          <li>50 GB secure cloud storage</li>
+          <li>Advanced analytics &amp; exports</li>
+          <li>Priority support (4 h response)</li>
+          <li>API access — 50,000 calls/mo</li>
+          <li>Team collaboration tools</li>
+        </ul>
+
+        <a href="#" class="btn-get-started" role="button" aria-label="Get started with Pro plan">
+          Get Started
+        </a>
+
+      </article>
+
+      <!-- ── CARD 3: Enterprise ──────────────────────────────── -->
+      <article class="pricing-card pricing-card--enterprise" role="listitem">
+
+        <p class="plan-name">Enterprise</p>
+
+        <!-- Price -->
+        <div class="plan-price" aria-label="Custom pricing">
+          <span class="currency"></span>
+          <span class="amount" style="font-size:clamp(38px,4.5vw,52px); padding-bottom:4px;">Custom</span>
+          <span class="period">contact us for a tailored quote</span>
+        </div>
+
+        <div class="plan-divider" role="separator"></div>
+
+        <!-- Feature list -->
+        <ul class="plan-features" aria-label="Enterprise plan features">
+          <li>Unlimited everything</li>
+          <li>1 TB+ dedicated storage</li>
+          <li>Custom analytics &amp; SLA</li>
+          <li>Dedicated account manager</li>
+          <li>Unlimited API calls</li>
+          <li>SSO, SAML &amp; audit logs</li>
+        </ul>
+
+        <a href="#" class="btn-get-started" role="button" aria-label="Contact us for Enterprise plan">
+          Contact Sales
+        </a>
+
+      </article>
+
+    </div><!-- /pricing-grid -->
+
+    <!-- Footer note -->
+    <p class="pricing-footer-note">
+      All plans include a <strong>14-day free trial</strong>. No credit card required. &nbsp;
+      <a href="#">Compare all features →</a>
+    </p>
+
+  </section>
+
+</body>
+</html>
