@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Leave a Review</title>
+
+<style>
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Segoe UI',sans-serif;
+}
+
+body{
+background:linear-gradient(135deg,#667eea,#764ba2);
+min-height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+padding:20px;
+}
+
+.review-box{
+width:100%;
+max-width:500px;
+background:white;
+padding:35px;
+border-radius:20px;
+box-shadow:0 15px 40px rgba(0,0,0,0.2);
+}
+
+.review-box h2{
+text-align:center;
+margin-bottom:20px;
+color:#333;
+}
+
+.input-group{
+margin-bottom:15px;
+}
+
+.input-group input,
+.input-group select,
+.input-group textarea{
+width:100%;
+padding:12px;
+border:1px solid #ddd;
+border-radius:10px;
+outline:none;
+font-size:15px;
+}
+
+.input-group textarea{
+height:120px;
+resize:none;
+}
+
+button{
+width:100%;
+padding:14px;
+border:none;
+border-radius:10px;
+background:#667eea;
+color:white;
+font-size:16px;
+font-weight:bold;
+cursor:pointer;
+transition:0.3s;
+}
+
+button:hover{
+background:#4f5dd5;
+}
+
+#message{
+margin-top:15px;
+text-align:center;
+font-weight:bold;
+}
+</style>
+</head>
+
+<body>
+
+<div class="review-box">
+<h2>⭐ Leave a Review</h2>
+
+<div class="input-group">
+<input type="text" id="visitorName" placeholder="Your Name">
+</div>
+
+<div class="input-group">
+<select id="rating">
+<option value="">Select Rating</option>
+<option value="1">⭐ 1 Star</option>
+<option value="2">⭐⭐ 2 Stars</option>
+<option value="3">⭐⭐⭐ 3 Stars</option>
+<option value="4">⭐⭐⭐⭐ 4 Stars</option>
+<option value="5">⭐⭐⭐⭐⭐ 5 Stars</option>
+</select>
+</div>
+
+<div class="input-group">
+<textarea id="feedback" placeholder="Write your feedback..."></textarea>
+</div>
+
+<button onclick="submitReview()">Submit Review</button>
+
+<p id="message"></p>
+</div>
+
+<script>
+const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwRagoPgw22qD3hOd6lT1AXBn1VxSL0d5I9HKQi-U-6OCW8APHsdb3fbUREeW5ui3L_dw/exec";
+
+async function submitReview(){
+
+const visitorName =
+document.getElementById("visitorName").value;
+
+const rating =
+document.getElementById("rating").value;
+
+const feedback =
+document.getElementById("feedback").value;
+
+if(!visitorName || !rating || !feedback){
+alert("Please fill all fields");
+return;
+}
+
+const reviewData = {
+visitorName,
+rating,
+feedback
+};
+
+try{
+
+const response = await fetch(WEB_APP_URL,{
+method:"POST",
+body:JSON.stringify(reviewData)
+});
+
+const result = await response.json();
+
+document.getElementById("message").innerHTML =
+"✅ Thank you! Review submitted.";
+
+document.getElementById("visitorName").value="";
+document.getElementById("rating").value="";
+document.getElementById("feedback").value="";
+
+}catch(error){
+
+document.getElementById("message").innerHTML =
+"❌ Submission Failed";
+
+console.log(error);
+
+}
+}
+</script>
+
+</body>
+</html>
